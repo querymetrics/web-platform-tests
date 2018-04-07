@@ -16,7 +16,7 @@
 // depending on the set of client hints it receives in the request headers.
 
   promise_test(t => {
-  return fetch("https://{{domains[]}}:{{ports[https][0]}}/client-hints/echo_client_hints_received.py", {"mode": "no-cors"}).then(r => {
+  return fetch("https://{{domains[]}}:{{ports[https][0]}}/client-hints/echo_client_hints_received.py").then(r => {
     assert_equals(r.status, 200)
     // Verify that the browser includes client hints in the headers when
     // fetching the XHR.
@@ -25,6 +25,19 @@
     assert_true(r.headers.has("viewport-width-received"), "viewport-width-received");
   });
 }, "Accept-CH header test");
+
+   promise_test(t => {
+  return fetch("https://{{domains[www]}}:{{ports[https][0]}}/client-hints/echo_client_hints_received.py").then(r => {
+    assert_equals(r.status, 200)
+    // Verify that the browser does not include client hints in the headers
+    // when fetching a cross-origin XHR.
+    assert_false(r.headers.has("device-memory-received"), "device-memory-received");
+    assert_false(r.headers.has("dpr-received"), "dpr-received");
+    assert_false(r.headers.has("viewport-width-received"), "viewport-width-received");
+  });
+}, "Cross-Origin Accept-CH header test");
+
+
 
 </script>
 
